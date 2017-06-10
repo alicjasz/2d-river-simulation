@@ -1,3 +1,5 @@
+clear;
+
 Lx=10;
 Ly=10;
 dx=0.1;
@@ -9,6 +11,10 @@ x = linspace(0, Lx, nx);
 y = linspace(0, Ly, ny);
 
 T=10;
+
+% video
+vidObj = VideoWriter('wave.avi');
+open(vidObj);
 
 %% variables
 wn=zeros(nx,ny);
@@ -46,12 +52,12 @@ while(t<T)
        end
    end
    clf;
-   subplot(2,1,1);
-   imagesc(x, y, wn');
-   colorbar;
-   caxis([-0.02 0.02]);
+   %subplot(2,1,1);
+   %imagesc(x, y, wn');
+   %colorbar;
+   %caxis([-0.02 0.02]);
    
-   subplot(2,1,2);
+   %subplot(2,1,2);
    mesh(x, y, wn');
    colorbar;
    caxis([-0.02 0.02]);
@@ -59,4 +65,9 @@ while(t<T)
    shg;
    pause(0.01);
    
+   % video
+   currFrame = getframe;
+   writeVideo(vidObj, currFrame);
 end
+
+close(vidObj);
