@@ -1,7 +1,7 @@
 clear;
 
 Lx=10;
-Ly=100;
+Ly=50;
 dx=0.1;
 dy=0.1;
 nx=fix(Lx/dx);
@@ -10,13 +10,13 @@ ny=fix(Ly/dy);
 x = linspace(0, Lx, nx);
 y = linspace(0, Ly, ny);
 
-T=200;
+T=100;
 
 % video
 % ten vide³o writer nie umie chyba nadpisywaæ plików, zawsze musi mieæ now¹
 % nazwê
-vidObj = VideoWriter('wave_boundaries.avi');
-open(vidObj);
+% vidObj = VideoWriter('wave_boundaries.avi');
+% open(vidObj);
 
 %% variables
 % za t¹ macierz mo¿na podstawiæ t¹ 0-1 w kszta³cie S np, to by by³o fajne
@@ -25,18 +25,7 @@ wn=zeros(nx,ny);
 % 0 - teren niedostêpny
 % 1 - rzeka
 % 2 - brzeg/granica
-terrain_map = [
-[0,2,1,1,1,1,2,0,0,0]
-[0,0,2,1,1,1,2,0,0,0]
-[0,0,0,2,1,1,1,2,0,0]
-[0,0,0,0,2,1,1,1,2,0]
-[0,0,0,2,1,1,1,2,0,0]
-[0,0,2,1,1,1,2,0,0,0]
-[2,1,1,1,2,0,0,0,0,0]
-[0,2,1,1,2,0,0,0,0,0]
-[0,2,1,1,1,2,0,0,0,0]
-[0,0,2,1,1,1,2,0,0,0]
-];
+
 
 wn_past=wn;
 wn_future=wn;
@@ -56,10 +45,10 @@ while(t<T)
    
    % chyba te¿ odbijanie tylko bardziej pro
 
-   wn_future(1,:) = wn(2,:) + ((CFL-1)/(CFL+1))*(wn_future(2,:)-wn(1,:));
-   wn_future(end,:) = wn(end-1,:) + ((CFL-1)/(CFL+1))*(wn_future(end-1,:)-wn(end,:));
-   wn_future(:,1) = wn(:,2)+((CFL-1)/(CFL+1))*(wn_future(:,2)-wn(:,1));
-   wn_future(:,end) = wn(:,end-1) + ((CFL-1)/(CFL+1))*(wn_future(:,end-1)-wn(:,end));
+  wn_future(1,:) = wn(2,:) + ((CFL-1)/(CFL+1))*(wn_future(2,:)-wn(1,:));
+  wn_future(end,:) = wn(end-1,:) + ((CFL-1)/(CFL+1))*(wn_future(end-1,:)-wn(end,:));
+  wn_future(:,1) = wn(:,2)+((CFL-1)/(CFL+1))*(wn_future(:,2)-wn(:,1));
+  wn_future(:,end) = wn(:,end-1) + ((CFL-1)/(CFL+1))*(wn_future(:,end-1)-wn(:,end));
 
    t=t+dt;
    wn_past=wn;
@@ -71,14 +60,15 @@ while(t<T)
    %end
    
    % tutaj siê tworzy fala inicjuj¹ca
-   wn(50,1)=dt^2*5*sin(30*pi*t/40);
+   wn(40,1)=dt^2*20*sin(30*pi*t/10);
+   wn(80,1)=dt^2*20*cos(30*pi*t/10);
     
    for i=2:nx-1
        for j=2:ny-1
-          if terrain_map(fix(j/100)+1,fix(i/10)+1)==1
+         % if terrain_map(fix(j/Ly)+1, fix(i/Lx)+1)==1
               wn_future(i,j) = 2*wn(i,j) - wn_past(i,j) ...
                   + CFL^2 * (wn(i+1,j) + wn(i,j+1) - 4*wn(i,j) + wn(i-1,j) + wn(i,j-1));
-          end
+         % end
        end
    end
    
@@ -89,16 +79,18 @@ while(t<T)
    caxis([-0.02 0.02]);
    
    subplot(2,1,2);
-   mesh(x, y, wn');
+   mesh(y, x, wn);
    colorbar;
    caxis([-0.02 0.02]);
-   axis([0 Lx 0 Ly -0.02 0.02]);
+   axis([0 Ly 0 Lx -0.02 0.02]);
+   colormap winter;
+   pbaspect([10 1 2]);
    shg;
-   pause(0.01);
+   pause(0.01)
    
    % video
-   currFrame = getframe;
-   writeVideo(vidObj, currFrame);
+   % currFrame = getframe;
+   % writeVideo(vidObj, currFrame);
 end
 
-close(vidObj);
+% close(vidObj);
