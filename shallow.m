@@ -3,7 +3,7 @@ clear;
 Lx=10;
 Ly=50;
 dx=0.1;
-dy=0.1;
+dy=0.2;
 nx=fix(Lx/dx);
 ny=fix(Ly/dy);
 
@@ -15,8 +15,8 @@ T=100;
 % video
 % ten vide³o writer nie umie chyba nadpisywaæ plików, zawsze musi mieæ now¹
 % nazwê
-% vidObj = VideoWriter('wave_boundaries.avi');
-% open(vidObj);
+vidObj = VideoWriter('wave_boundaries.avi');
+open(vidObj);
 
 %% variables
 % za t¹ macierz mo¿na podstawiæ t¹ 0-1 w kszta³cie S np, to by by³o fajne
@@ -60,9 +60,16 @@ while(t<T)
    %end
    
    % tutaj siê tworzy fala inicjuj¹ca
-   wn(40,1)=dt^2*20*sin(30*pi*t/10);
-   wn(80,1)=dt^2*20*cos(30*pi*t/10);
-    
+   wn(1,10)=dt^2*10*sin(30*pi*t/10);
+   
+   wn(10,1)=dt^2*10*sin(30*pi*t/10);
+   wn(30,1)=dt^2*20*sin(30*pi*t/10);
+   wn(50,1)=dt^2*30*sin(20*pi*t/5);
+   wn(70,1)=dt^2*20*cos(30*pi*t/10);
+   wn(90,1)=dt^2*10*sin(30*pi*t/10);
+   
+   wn(100,10)=dt^2*10*sin(30*pi*t/10);
+   
    for i=2:nx-1
        for j=2:ny-1
          % if terrain_map(fix(j/Ly)+1, fix(i/Lx)+1)==1
@@ -73,10 +80,12 @@ while(t<T)
    end
    
    clf;
+   
    subplot(2,1,1);
    imagesc(y, x, wn);
    colorbar;
    caxis([-0.02 0.02]);
+   title(['Time: ' num2str(t)]);
    
    subplot(2,1,2);
    mesh(y, x, wn);
@@ -89,8 +98,8 @@ while(t<T)
    pause(0.01)
    
    % video
-   % currFrame = getframe;
-   % writeVideo(vidObj, currFrame);
+   currFrame = getframe;
+   writeVideo(vidObj, currFrame);
 end
 
-% close(vidObj);
+close(vidObj);
